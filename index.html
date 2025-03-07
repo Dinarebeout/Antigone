@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Antigone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                    }
+                }
+            }
+        };
+
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary text-white p-4 shadow-md">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl font-bold">Quiz Antigone</h1>
+            <div class="mt-2 md:mt-0 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="text-sm">Visiteurs: <span id="visitor-count" class="font-bold">1</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4">
+        <!-- Introduction -->
+        <section id="intro" class="mb-8">
+            <h2 class="text-xl font-bold mb-4 text-primary">Bienvenue au Quiz sur Antigone de Jean Anouilh</h2>
+            <p class="mb-4">Testez vos connaissances sur cette œuvre majeure de la littérature française. Le quiz est divisé en plusieurs sections couvrant différents aspects de la pièce.</p>
+            <button id="start-btn" class="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors">
+                Commencer le Quiz
+            </button>
+        </section>
+
+        <!-- Quiz Sections -->
+        <section id="quiz-sections" class="hidden">
+            <h2 class="text-xl font-bold mb-4 text-primary">Choisissez une section</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="fiche-technique">
+                    <h3 class="font-bold">Fiche Technique</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur l'auteur, le contexte et la structure</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="style">
+                    <h3 class="font-bold">Style</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur la langue, le ton et les figures de style</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="prologue">
+                    <h3 class="font-bold">Le Prologue</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur l'introduction de la pièce</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="antigone-ismene">
+                    <h3 class="font-bold">Antigone et Ismène</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur le conflit entre les deux sœurs</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="antigone-prise">
+                    <h3 class="font-bold">Antigone prise sur le fait</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur l'arrestation d'Antigone</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="confrontation">
+                    <h3 class="font-bold">Confrontation avec Créon</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur la première confrontation</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="debat">
+                    <h3 class="font-bold">Débat idéologique</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur le débat entre Créon et Antigone</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="ismene">
+                    <h3 class="font-bold">Intervention d'Ismène</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur le rôle d'Ismène</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="hemon">
+                    <h3 class="font-bold">Hémon face à Créon</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur la confrontation père-fils</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="condamnation">
+                    <h3 class="font-bold">La condamnation</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur la sentence d'Antigone</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="mort">
+                    <h3 class="font-bold">La mort d'Antigone</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur les conséquences tragiques</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded shadow hover:shadow-md transition-shadow cursor-pointer" data-section="denouement">
+                    <h3 class="font-bold">Dénouement</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Questions sur la fin de la pièce</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Questions -->
+        <section id="quiz-questions" class="hidden">
+            <div class="flex items-center mb-4">
+                <button id="back-btn" class="mr-4 text-primary hover:text-primary/80 focus:outline-none focus:underline">
+                    ← Retour
+                </button>
+                <h2 id="section-title" class="text-xl font-bold text-primary"></h2>
+            </div>
+            
+            <div id="question-container"></div>
+            
+            <div class="mt-4 flex justify-between">
+                <button id="prev-btn" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors">
+                    Précédent
+                </button>
+                <span id="progress" class="self-center text-sm text-gray-600 dark:text-gray-400"></span>
+                <button id="next-btn" class="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors">
+                    Suivant
+                </button>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section id="results" class="hidden">
+            <h2 class="text-xl font-bold mb-4 text-primary">Résultats</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
+                <p class="text-lg mb-2">Votre score: <span id="score" class="font-bold"></span></p>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-4">
+                    <div id="score-bar" class="bg-primary h-4 rounded-full"></div>
+                </div>
+                <div id="result-details" class="mt-4"></div>
+                <div class="mt-6 flex space-x-4">
+                    <button id="retry-btn" class="bg-primary hover:bg-primary/80 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors">
+                        Réessayer
+                    </button>
+                    <button id="sections-btn" class="bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors">
+                        Autres sections
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 dark:bg-gray-800 p-4 mt-8">
+        <div class="container mx-auto text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>Quiz sur Antigone de Jean Anouilh - © 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz data
+        const quizData = {
+            'fiche-technique': {
+                title: 'Fiche Technique',
+                questions: [
+                    {
+                        question: "Quel est le titre de l'œuvre ?",
+                        options: ["Œdipe Roi", "Antigone", "Les Sept contre Thèbes", "La Machine infernale"],
+                        answer: 1,
+                        explanation: "Le titre est directement tiré de la protagoniste, Antigone, qui incarne le conflit central de la pièce."
+                    },
+                    {
+                        question: "Qui est l'auteur de cette pièce ?",
+                        options: ["Sophocle", "Jean Cocteau", "Jean Anouilh", "Albert Camus"],
+                        answer: 2,
+                        explanation: "Jean Anouilh, dramaturge français, a écrit cette version moderne d'Antigone en 1944, distincte de celle de Sophocle."
+                    },
+                    {
+                        question: "En quelle année la pièce a-t-elle été représentée pour la première fois ?",
+                        options: ["1939", "1944", "1950", "1960"],
+                        answer: 1,
+                        explanation: "Antigone a été créée en 1944, pendant l'occupation allemande, ce qui influence son interprétation comme une métaphore de la résistance."
+                    },
+                    {
+                        question: "Quel est le genre de l'œuvre ?",
+                        options: ["Roman historique", "Tragédie moderne", "Comédie satirique", "Poésie dramatique"],
+                        answer: 1,
+                        explanation: "Bien que basée sur une tragédie grecque, la pièce est modernisée par Anouilh avec des éléments contemporains et existentiels."
+                    },
+                    {
+                        question: "Quel éditeur a publié la pièce en volume ?",
+                        options: ["Gallimard", "Éditions de la Table Ronde", "Flammarion", "Seuil"],
+                        answer: 1,
+                        explanation: "La première édition en volume d'Antigone a été publiée par les Éditions de la Table Ronde, maison associée à Anouilh."
+                    },
+                    {
+                        question: "Dans quel contexte historique la pièce a-t-elle été écrite ?",
+                        options: ["Révolution française", "Occupation allemande en France", "Première Guerre mondiale", "Guerre froide"],
+                        answer: 1,
+                        explanation: "Écrite en 1944, la pièce reflète les tensions de l'occupation nazie, souvent lue comme une allégorie de la résistance française."
+                    },
+                    {
+                        question: "Qui présente l'histoire au début de la pièce ?",
+                        options: ["Antigone elle-même", "Le Chœur ou Prologue", "Créon", "Un narrateur omniscient"],
+                        answer: 1,
+                        explanation: "Le Prologue, équivalent moderne du Chœur grec, introduit les personnages et annonce la tragédie à venir."
+                    },
+                    {
+                        question: "Quelle est la structure de la pièce ?",
+                        options: ["Trois actes distincts", "Un seul acte continu", "Cinq actes classiques", "Plusieurs scènes séparées"],
+                        answer: 1,
+                        explanation: "Contrairement à la tradition grecque, Anouilh opte pour une structure en un acte fluide, renforçant l'intensité dramatique."
+                    },
+                    {
+                        question: "Quel est un thème central de la pièce ?",
+                        options: ["La quête de richesse", "La résistance face à l'autorité", "L'amour romantique", "La vengeance familiale"],
+                        answer: 1,
+                        explanation: "Antigone défie Créon par principe moral, symbolisant la lutte contre l'oppression, un thème résonnant avec l'époque."
+                    },
+                    {
+                        question: "Où se déroule l'action de la pièce ?",
+                        options: ["Paris moderne", "Thèbes, cadre intemporel", "Une île grecque", "Berlin occupé"],
+                        answer: 1,
+                        explanation: "Bien que située à Thèbes, l'absence de détails historiques précis rend le cadre universel et abstrait."
+                    }
+                ]
+            },
+            'style': {
+                title: 'Style',
+                questions: [
+                    {
+                        question: "Quelle est la caractéristique principale de la langue dans Antigone ?",
+                        options: ["Ornée et poétique", "Directe et moderne", "Archaïque et solennelle", "Abstraite et philosophique"],
+                        answer: 1,
+                        explanation: "Anouilh utilise un langage simple et contemporain, contrastant avec la tragédie classique de Sophocle."
+                    },
+                    {
+                        question: "Quelle est la tonalité dominante de la pièce ?",
+                        options: ["Optimiste", "Ironique et désabusée", "Sentimentale", "Mystique"],
+                        answer: 1,
+                        explanation: "Le ton reflète une vision pessimiste et absurde de la vie, typique de l'époque et de la philosophie d'Anouilh."
+                    },
+                    {
+                        question: "Quel est le point de vue principal de la pièce ?",
+                        options: ["Narrateur omniscient", "Dialogues entre personnages", "Monologue intérieur", "Voix divine"],
+                        answer: 1,
+                        explanation: "L'histoire avance par les confrontations verbales, notamment entre Antigone et Créon, sans narrateur extérieur."
+                    },
+                    {
+                        question: "Quelle figure de style est souvent utilisée pour opposer Antigone et Créon ?",
+                        options: ["Métaphore", "Antithèse", "Hyperbole", "Allitération"],
+                        answer: 1,
+                        explanation: "L'opposition entre l'idéalisme d'Antigone et le pragmatisme de Créon est soulignée par des antithèses dans leurs discours."
+                    },
+                    {
+                        question: "Quel est le rythme général du récit ?",
+                        options: ["Lent et descriptif", "Rapide et tendu", "Irrégulier et chaotique", "Statique et répétitif"],
+                        answer: 1,
+                        explanation: "Les dialogues vifs et l'absence de pauses créent une montée rapide vers le dénouement tragique."
+                    },
+                    {
+                        question: "Comment le style reflète-t-il l'opposition entre idéalisme et pragmatisme ?",
+                        options: ["Par des descriptions détaillées", "Par des dialogues contrastés", "Par des chansons lyriques", "Par des silences prolongés"],
+                        answer: 1,
+                        explanation: "Les échanges entre Antigone (idéaliste) et Créon (pragmatique) mettent en lumière leurs visions opposées."
+                    },
+                    {
+                        question: "Quelle influence stylistique est perceptible dans la pièce ?",
+                        options: ["Réalisme naturaliste", "Théâtre de l'absurde", "Comédie classique", "Épopée médiévale"],
+                        answer: 1,
+                        explanation: "L'absurdité de la lutte d'Antigone et le désespoir final évoquent des auteurs comme Camus ou Sartre."
+                    },
+                    {
+                        question: "Quel effet l'ironie produit-elle dans le style ?",
+                        options: ["Elle rend l'histoire comique", "Elle souligne l'absurdité des choix", "Elle glorifie les personnages", "Elle ralentit le récit"],
+                        answer: 1,
+                        explanation: "L'ironie, comme dans les remarques du Prologue, met en évidence l'inéluctabilité et l'absurde du destin."
+                    },
+                    {
+                        question: "Pourquoi le langage familier est-il utilisé ?",
+                        options: ["Pour imiter Sophocle", "Pour rendre les personnages accessibles", "Pour complexifier le texte", "Pour critiquer la société"],
+                        answer: 1,
+                        explanation: "Le ton familier modernise la tragédie et rapproche les personnages du public contemporain."
+                    },
+                    {
+                        question: "Quel rôle joue le Prologue dans le style ?",
+                        options: ["Il ralentit l'action", "Il annonce le tragique avec détachement", "Il ajoute du suspense", "Il résout les conflits"],
+                        answer: 1,
+                        explanation: "Le Prologue présente les personnages et leur destin de manière détachée, renforçant l'inéluctabilité tragique."
+                    }
+                ]
+            },
+            'prologue': {
+                title: 'Le Prologue',
+                questions: [
+                    {
+                        question: "Quel est le rôle du Prologue au début de la pièce ?",
+                        options: ["Raconter une histoire comique", "Présenter les personnages et annoncer leur destin", "Décrire le palais de Thèbes", "Chanter une chanson"],
+                        answer: 1,
+                        explanation: "Le Prologue introduit les personnages (Antigone, Créon, Hémon, etc.) et révèle dès le départ l'issue tragique, préparant le public à l'inéluctabilité du drame."
+                    },
+                    {
+                        question: "Comment le Prologue décrit-il Antigone ?",
+                        options: ["Comme une femme joyeuse et insouciante", "Comme une fille frêle mais déterminée", "Comme une reine puissante", "Comme une vieille femme sage"],
+                        answer: 1,
+                        explanation: "Antigone est décrite comme petite et fragile physiquement, mais avec une volonté inflexible, ce qui annonce son caractère central."
+                    },
+                    {
+                        question: "Que dit le Prologue sur Créon ?",
+                        options: ["Il est un roi cruel dès le départ", "Il est un homme ordinaire devenu roi par nécessité", "Il est un dieu immortel", "Il est un marchand riche"],
+                        answer: 1,
+                        explanation: "Créon est présenté comme un homme pragmatique, poussé au pouvoir par les circonstances, contrastant avec l'idéalisme d'Antigone."
+                    },
+                    {
+                        question: "Quel événement passé est mentionné par le Prologue ?",
+                        options: ["La naissance d'Antigone", "La mort des frères d'Antigone, Étéocle et Polynice", "Le mariage de Créon", "Une guerre contre Sparte"],
+                        answer: 1,
+                        explanation: "Le Prologue rappelle que les deux frères se sont entretués, déclenchant le conflit autour de leur sépulture."
+                    },
+                    {
+                        question: "Pourquoi le Prologue annonce-t-il la mort d'Antigone ?",
+                        options: ["Pour surprendre le public", "Pour souligner l'inéluctabilité de la tragédie", "Pour critiquer Créon", "Pour faire rire"],
+                        answer: 1,
+                        explanation: "En révélant le destin, le Prologue met l'accent sur le tragique inévitable, typique de la tragédie grecque revisitée."
+                    },
+                    {
+                        question: "Comment le Prologue décrit-il Hémon ?",
+                        options: ["Comme un guerrier brutal", "Comme le fiancé d'Antigone, jeune et amoureux", "Comme un traître", "Comme un vieil homme sage"],
+                        answer: 1,
+                        explanation: "Hémon est présenté comme un jeune homme épris d'Antigone, annonçant son rôle dans le drame."
+                    },
+                    {
+                        question: "Quel est le ton du Prologue ?",
+                        options: ["Joyeux et optimiste", "Détaché et ironique", "Furieux et accusateur", "Triste et larmoyant"],
+                        answer: 1,
+                        explanation: "Le Prologue adopte un ton distant et légèrement ironique, comme s'il commentait un jeu dont l'issue est connue."
+                    },
+                    {
+                        question: "Que représente Ismène selon le Prologue ?",
+                        options: ["Une rebelle comme Antigone", "La sœur raisonnable et conformiste", "Une reine ambitieuse", "Une servante fidèle"],
+                        answer: 1,
+                        explanation: "Ismène est décrite comme plus prudente et soumise que sa sœur, établissant un contraste avec Antigone."
+                    },
+                    {
+                        question: "Quel est le décor mentionné par le Prologue ?",
+                        options: ["Une forêt sombre", "Un palais simple et intemporel", "Une plage ensoleillée", "Une ville en ruines"],
+                        answer: 1,
+                        explanation: "Le décor est minimaliste et abstrait, sans détails historiques précis, pour universaliser l'histoire."
+                    },
+                    {
+                        question: "Pourquoi le Prologue compare-t-il la tragédie à une machine ?",
+                        options: ["Pour montrer qu'elle est compliquée", "Pour illustrer son mécanisme inéluctable", "Pour critiquer les personnages", "Pour parler de technologie"],
+                        answer: 1,
+                        explanation: "L'image de la machine suggère que la tragédie, une fois lancée, suit un cours implacable jusqu'à la fin."
+                    }
+                ]
+            },
+            'antigone-ismene': {
+                title: 'Antigone et Ismène',
+                questions: [
+                    {
+                        question: "Que veut faire Antigone au début de cette section ?",
+                        options: ["Se marier avec Hémon", "Enterrer son frère Polynice", "Partir loin de Thèbes", "Demander pardon à Créon"],
+                        answer: 1,
+                        explanation: "Antigone révèle à Ismène son intention d'enterrer Polynice malgré l'interdiction de Créon, montrant sa détermination."
+                    },
+                    {
+                        question: "Quelle est la réaction d'Ismène face au projet d'Antigone ?",
+                        options: ["Elle l'encourage avec enthousiasme", "Elle refuse de l'aider par peur", "Elle propose un autre plan", "Elle rit de l'idée"],
+                        answer: 1,
+                        explanation: "Ismène, plus prudente, craint les conséquences et refuse de participer, soulignant son caractère opposé à celui d'Antigone."
+                    },
+                    {
+                        question: "Pourquoi Créon a-t-il interdit l'enterrement de Polynice ?",
+                        options: ["Parce qu'il était un lâche", "Parce qu'il a trahi Thèbes", "Parce qu'il n'avait pas de famille", "Parce qu'il était pauvre"],
+                        answer: 1,
+                        explanation: "Créon a décrété que Polynice, ayant attaqué Thèbes, ne mérite pas de sépulture, contrairement à Étéocle."
+                    },
+                    {
+                        question: "Comment Antigone justifie-t-elle son acte ?",
+                        options: ["Par amour pour Créon", "Par devoir moral envers les lois divines", "Par haine de Thèbes", "Par envie de gloire"],
+                        answer: 1,
+                        explanation: "Antigone invoque les lois non écrites des dieux, supérieures selon elle aux décrets humains de Créon."
+                    },
+                    {
+                        question: "Quel est le ton d'Antigone quand elle parle à Ismène ?",
+                        options: ["Calme et résolu", "Joyeux et léger", "Plein de doute", "Colérique et violent"],
+                        answer: 0,
+                        explanation: "Antigone parle avec une détermination froide, montrant qu'elle a déjà accepté son destin."
+                    },
+                    {
+                        question: "Que reproche Antigone à Ismène ?",
+                        options: ["De ne pas aimer Polynice", "De choisir la soumission au lieu du courage", "De vouloir prendre sa place", "De mentir à Créon"],
+                        answer: 1,
+                        explanation: "Antigone critique la passivité d'Ismène, qui préfère obéir à Créon plutôt que de suivre son sens de l'honneur."
+                    },
+                    {
+                        question: "Pourquoi Ismène dit-elle qu'elles sont faibles ?",
+                        options: ["Parce qu'elles sont pauvres", "Parce qu'elles sont des femmes", "Parce qu'elles sont malades", "Parce qu'elles sont jeunes"],
+                        answer: 1,
+                        explanation: "Ismène argue que, en tant que femmes, elles n'ont pas le pouvoir de défier Créon, reflétant une vision traditionnelle."
+                    },
+                    {
+                        question: "Comment Antigone répond-elle à l'argument d'Ismène ?",
+                        options: ["Elle accepte sa faiblesse", "Elle rejette cette excuse et agit seule", "Elle demande l'aide d'Hémon", "Elle pleure de désespoir"],
+                        answer: 1,
+                        explanation: "Antigone refuse de se cacher derrière sa condition de femme et décide d'agir, affirmant sa liberté individuelle."
+                    },
+                    {
+                        question: "Quel sentiment domine chez Ismène dans cette scène ?",
+                        options: ["La colère", "La peur", "La joie", "L'indifférence"],
+                        answer: 1,
+                        explanation: "Ismène est terrifiée par les conséquences possibles de la désobéissance, ce qui la paralyse."
+                    },
+                    {
+                        question: "Quel est le conflit central révélé dans cette section ?",
+                        options: ["L'amour entre Antigone et Hémon", "Le devoir moral contre l'autorité humaine", "La rivalité entre sœurs", "La guerre à Thèbes"],
+                        answer: 1,
+                        explanation: "Le dialogue met en lumière l'opposition entre les lois divines (Antigone) et les lois de Créon, cœur de la tragédie."
+                    }
+                ]
+            },
+            'antigone-prise': {
+                title: 'Antigone prise sur le fait',
+                questions: [
+                    {
+                        question: "Qui surprend Antigone en train d'enterrer Polynice ?",
+                        options: ["Créon", "Les gardes", "Hémon", "Ismène"],
+                        answer: 1,
+                        explanation: "Les gardes, chargés de surveiller le corps de Polynice, arrêtent Antigone après qu'elle a accompli son acte."
+                    },
+                    {
+                        question: "Que fait Antigone quand les gardes l'arrêtent ?",
+                        options: ["Elle s'enfuit", "Elle se débat violemment", "Elle reste calme et assume son acte", "Elle nie tout"],
+                        answer: 2,
+                        explanation: "Antigone ne résiste pas et accepte son arrestation avec sérénité, fidèle à sa résolution."
+                    },
+                    {
+                        question: "Pourquoi les gardes hésitent-ils à arrêter Antigone ?",
+                        options: ["Ils la trouvent trop jeune", "Elle est la nièce de Créon", "Ils admirent son courage", "Ils ne comprennent pas son acte"],
+                        answer: 1,
+                        explanation: "En tant que membre de la famille royale, Antigone leur inspire une certaine crainte, mais ils obéissent à Créon."
+                    },
+                    {
+                        question: "Quel est le ton des gardes dans cette scène ?",
+                        options: ["Moqueur et vulgaire", "Triste et compatissant", "Furieux et menaçant", "Respectueux et solennel"],
+                        answer: 0,
+                        explanation: "Les gardes parlent avec un ton prosaïque et ironique, contrastant avec la gravité d'Antigone."
+                    },
+                    {
+                        question: "Que symbolise l'acte d'Antigone pour les gardes ?",
+                        options: ["Une simple bêtise", "Une rébellion contre Créon", "Un geste d'amour", "Une tentative de fuite"],
+                        answer: 1,
+                        explanation: "Les gardes perçoivent son geste comme un défi direct à l'autorité du roi, bien qu'ils le rapportent sans émotion."
+                    },
+                    {
+                        question: "Comment Antigone a-t-elle tenté d'enterrer Polynice ?",
+                        options: ["Avec une pelle", "Avec ses mains et de la poussière", "Avec l'aide d'Ismène", "Avec des outils volés"],
+                        answer: 1,
+                        explanation: "Elle utilise ses mains pour recouvrir le corps de poussière, un geste symbolique mais suffisant selon les rites."
+                    },
+                    {
+                        question: "Quel est le premier sentiment des gardes face à Antigone ?",
+                        options: ["La pitié", "La surprise", "La colère", "L'indifférence"],
+                        answer: 1,
+                        explanation: "Ils sont étonnés de voir une jeune fille commettre un tel acte interdit, ce qui les déstabilise brièvement."
+                    },
+                    {
+                        question: "Pourquoi les gardes amènent-ils Antigone à Créon ?",
+                        options: ["Pour demander une récompense", "Parce qu'ils n'ont pas d'autre choix", "Pour la protéger", "Pour se moquer d'elle"],
+                        answer: 1,
+                        explanation: "En tant que subalternes, ils doivent obéir aux ordres et livrer Antigone au roi, sans initiative personnelle."
+                    },
+                    {
+                        question: "Quel est le rôle des gardes dans cette section ?",
+                        options: ["Des héros courageux", "Des figures secondaires et prosaïques", "Des conseillers de Créon", "Des amis d'Antigone"],
+                        answer: 1,
+                        explanation: "Les gardes apportent une touche réaliste et terre-à-terre, contrastant avec l'héroïsme d'Antigone."
+                    },
+                    {
+                        question: "Quel effet l'arrestation d'Antigone a-t-elle sur le drame ?",
+                        options: ["Elle ralentit l'action", "Elle précipite la confrontation avec Créon", "Elle résout le conflit", "Elle introduit un mystère"],
+                        answer: 1,
+                        explanation: "Son arrestation annonce le face-à-face central entre elle et Créon, accélérant la tragédie."
+                    }
+                ]
+            },
+            'confrontation': {
+                title: 'Confrontation avec Créon',
+                questions: [
+                    {
+                        question: "Comment Créon réagit-il en apprenant qu'Antigone a été arrêtée ?",
+                        options: ["Il rit de l'absurdité", "Il est surpris et troublé", "Il ordonne immédiatement sa mort", "Il célèbre sa capture"],
+                        answer: 1,
+                        explanation: "Créon est déstabilisé en découvrant qu'Antigone, sa nièce, est la coupable, car cela complique sa position de roi."
+                    },
+                    {
+                        question: "Quelle est la première question que Créon pose à Antigone ?",
+                        options: ["Pourquoi elle hait Thèbes", "Si elle a vraiment désobéi à son décret", "Si elle veut mourir", "Où est Ismène"],
+                        answer: 1,
+                        explanation: "Créon cherche à confirmer l'acte d'Antigone, espérant peut-être qu'elle nie ou qu'il y ait un malentendu."
+                    },
+                    {
+                        question: "Comment Antigone répond-elle à Créon ?",
+                        options: ["Elle nie tout", "Elle avoue fièrement son acte", "Elle pleure et implore son pardon", "Elle reste silencieuse"],
+                        answer: 1,
+                        explanation: "Antigone revendique son geste avec assurance, affirmant son droit moral face à l'autorité de Créon."
+                    },
+                    {
+                        question: "Que propose Créon à Antigone au début ?",
+                        options: ["De l'exiler", "De la pardonner si elle se repent", "De la marier à Hémon", "De la libérer sans condition"],
+                        answer: 1,
+                        explanation: "Créon, encore pragmatique, offre une issue à Antigone en échange de sa soumission, montrant une volonté initiale d'éviter le conflit."
+                    },
+                    {
+                        question: "Pourquoi Antigone refuse-t-elle l'offre de Créon ?",
+                        options: ["Elle veut devenir reine", "Elle défend ses principes jusqu'au bout", "Elle ne croit pas en sa sincérité", "Elle veut protéger Ismène"],
+                        answer: 1,
+                        explanation: "Antigone rejette tout compromis, car sa désobéissance est une question de devoir moral, pas de survie."
+                    },
+                    {
+                        question: "Quel ton adopte Créon face à Antigone ?",
+                        options: ["Moqueur et méprisant", "Calme mais autoritaire", "Désespéré et implorant", "Furieux et violent"],
+                        answer: 1,
+                        explanation: "Créon reste maître de lui au début, tentant de raisonner Antigone avec une autorité mesurée."
+                    },
+                    {
+                        question: "Que reproche Créon à Antigone dans cette scène ?",
+                        options: ["De trahir sa famille", "De défier son autorité pour rien", "De voler le trésor royal", "De mentir aux gardes"],
+                        answer: 1,
+                        explanation: "Créon voit l'acte d'Antigone comme un défi inutile à son pouvoir, ne comprenant pas sa logique morale."
+                    },
+                    {
+                        question: "Comment Antigone perçoit-elle Créon dans cette confrontation ?",
+                        options: ["Comme un tyran sans cœur", "Comme un faible déguisé en roi", "Comme un père compatissant", "Comme un dieu injuste"],
+                        answer: 0,
+                        explanation: "Pour Antigone, Créon incarne une autorité inhumaine qui bafoue les lois divines, renforçant son opposition."
+                    },
+                    {
+                        question: "Quel est le premier signe de tension dans cette scène ?",
+                        options: ["Créon frappe Antigone", "Antigone défie ouvertement Créon", "Les gardes interviennent", "Ismène entre en pleurant"],
+                        answer: 1,
+                        explanation: "Le refus catégorique d'Antigone de se soumettre marque le début d'un affrontement insoluble."
+                    },
+                    {
+                        question: "Quel est l'enjeu principal révélé dans cette section ?",
+                        options: ["La richesse de Thèbes", "Le choc entre lois humaines et lois divines", "L'amour d'Antigone pour Hémon", "La rivalité entre Créon et les gardes"],
+                        answer: 1,
+                        explanation: "Cette confrontation pose le conflit central : l'obéissance à Créon (lois humaines) contre le devoir moral d'Antigone."
+                    }
+                ]
+            },
+            'debat': {
+                title: 'Débat idéologique',
+                questions: [
+                    {
+                        question: "Quel argument Créon utilise-t-il pour justifier son décret ?",
+                        options: ["Polynice était un criminel", "La stabilité de Thèbes prime sur tout", "Les dieux l'ont ordonné", "Il détestait Polynice"],
+                        answer: 1,
+                        explanation: "Créon défend son décret comme un mal nécessaire pour maintenir l'ordre et éviter l'anarchie."
+                    },
+                    {
+                        question: "Comment Antigone répond-elle à l'argument de Créon ?",
+                        options: ["Elle accepte son point de vue", "Elle oppose les lois éternelles des dieux", "Elle propose une autre solution", "Elle se moque de lui"],
+                        answer: 1,
+                        explanation: "Antigone insiste sur les lois divines, intemporelles et supérieures aux décisions humaines de Créon."
+                    },
+                    {
+                        question: "Que dit Créon sur le rôle d'un roi ?",
+                        options: ["Il doit être aimé de tous", "Il doit faire des choix difficiles", "Il doit suivre les prêtres", "Il doit fuir les responsabilités"],
+                        answer: 1,
+                        explanation: "Créon explique que gouverner implique des compromis et des sacrifices, contrastant avec l'idéalisme d'Antigone."
+                    },
+                    {
+                        question: "Pourquoi Antigone rejette-t-elle la logique de Créon ?",
+                        options: ["Elle veut le pouvoir pour elle-même", "Elle refuse de vivre dans un monde de compromis", "Elle pense qu'il ment", "Elle ne comprend pas ses arguments"],
+                        answer: 1,
+                        explanation: "Antigone préfère mourir plutôt que d'accepter une vie basée sur le pragmatisme et l'abandon de ses valeurs."
+                    },
+                    {
+                        question: "Quel ton adopte Créon dans ce débat ?",
+                        options: ["Paternaliste et raisonnable", "Violent et menaçant", "Plein de regrets", "Ironique et détaché"],
+                        answer: 0,
+                        explanation: "Créon tente de convaincre Antigone comme un père avec une enfant têtue, montrant une patience initiale."
+                    },
+                    {
+                        question: "Que révèle Antigone sur son état d'esprit ?",
+                        options: ["Elle doute de son choix", "Elle accepte la mort comme inévitable", "Elle espère que Créon change d'avis", "Elle veut fuir Thèbes"],
+                        answer: 1,
+                        explanation: "Antigone exprime une résignation lucide, prête à mourir pour ses convictions."
+                    },
+                    {
+                        question: "Quel exemple Créon donne-t-il pour justifier son rôle ?",
+                        options: ["Une bataille gagnée", "La nécessité de dire 'oui' au désordre du monde", "La richesse de Thèbes", "Sa propre enfance"],
+                        answer: 1,
+                        explanation: "Créon explique qu'un roi doit accepter la réalité imparfaite, contrairement à Antigone qui dit 'non'."
+                    },
+                    {
+                        question: "Comment Antigone décrit-elle son 'non' ?",
+                        options: ["Comme un caprice", "Comme une affirmation pure et absolue", "Comme une erreur", "Comme une vengeance"],
+                        answer: 1,
+                        explanation: "Le 'non' d'Antigone est un refus total de compromission, symbolisant son idéalisme intransigeant."
+                    },
+                    {
+                        question: "Quel sentiment domine chez Créon à la fin de ce débat ?",
+                        options: ["La joie", "La frustration", "La pitié", "L'indifférence"],
+                        answer: 1,
+                        explanation: "Créon s'irrite face à l'entêtement d'Antigone, qui rend son autorité inefficace."
+                    },
+                    {
+                        question: "Quel est l'effet de ce débat sur le public ?",
+                        options: ["Il apaise les tensions", "Il accentue l'opposition irréconciliable", "Il résout le conflit", "Il introduit un espoir"],
+                        answer: 1,
+                        explanation: "Le fossé idéologique entre Créon et Antigone se creuse, rendant la tragédie inévitable."
+                    }
+                ]
+            },
+            'ismene': {
+                title: "Intervention d'Ismène",
+                questions: [
+                    {
+                        question: "Pourquoi Ismène entre-t-elle dans cette scène ?",
+                        options: ["Pour accuser Antigone", "Pour demander à partager sa punition", "Pour supplier Créon de partir", "Pour célébrer avec Créon"],
+                        answer: 1,
+                        explanation: "Ismène, prise de remords, veut se solidariser avec Antigone et mourir avec elle."
+                    },
+                    {
+                        question: "Comment Antigone réagit-elle à l'offre d'Ismène ?",
+                        options: ["Elle l'accueille avec joie", "Elle la rejette avec mépris", "Elle la remercie chaleureusement", "Elle reste indifférente"],
+                        answer: 1,
+                        explanation: "Antigone refuse l'aide tardive d'Ismène, soulignant qu'elle a choisi son destin seule."
+                    },
+                    {
+                        question: "Que dit Ismène à Créon pour le convaincre ?",
+                        options: ["Qu'Antigone est folle", "Qu'elle est aussi coupable", "Que Thèbes la soutient", "Que Hémon l'aime"],
+                        answer: 1,
+                        explanation: "Ismène prétend avoir participé à l'acte pour protéger Antigone ou partager son sort."
+                    },
+                    {
+                        question: "Pourquoi Créon refuse-t-il de punir Ismène ?",
+                        options: ["Il sait qu'elle ment", "Il la trouve trop faible", "Il veut l'épouser", "Il la pardonne par pitié"],
+                        answer: 0,
+                        explanation: "Créon comprend qu'Ismène n'a pas agi et rejette sa tentative de se sacrifier."
+                    },
+                    {
+                        question: "Quel est le ton d'Ismène dans cette scène ?",
+                        options: ["Arrogant", "Désespéré et suppliant", "Ironique", "Joyeux"],
+                        answer: 1,
+                        explanation: "Ismène parle avec angoisse et désespoir, cherchant à sauver ou accompagner sa sœur."
+                    },
+                    {
+                        question: "Que reproche Antigone à Ismène dans cette section ?",
+                        options: ["De l'avoir trahie", "D'arriver trop tard pour la soutenir", "De mentir à Créon", "De vouloir vivre"],
+                        answer: 1,
+                        explanation: "Antigone critique Ismène pour son revirement, estimant qu'elle n'a pas eu le courage au bon moment."
+                    },
+                    {
+                        question: "Comment Créon perçoit-il l'intervention d'Ismène ?",
+                        options: ["Comme une menace", "Comme une faiblesse inutile", "Comme une aide précieuse", "Comme une rébellion"],
+                        answer: 1,
+                        explanation: "Créon voit Ismène comme une figure pathétique, incapable de changer le cours des événements."
+                    },
+                    {
+                        question: "Quel contraste entre Antigone et Ismène est renforcé ici ?",
+                        options: ["Beauté contre laideur", "Courage contre peur", "Richesse contre pauvreté", "Jeunesse contre vieillesse"],
+                        answer: 1,
+                        explanation: "Antigone incarne la bravoure absolue, tandis qu'Ismène représente la prudence et la peur."
+                    },
+                    {
+                        question: "Quel sentiment domine chez Antigone face à Ismène ?",
+                        options: ["La tendresse", "Le mépris", "La pitié", "La joie"],
+                        answer: 1,
+                        explanation: "Antigone rejette Ismène avec dureté, refusant toute complicité tardive."
+                    },
+                    {
+                        question: "Quel est l'effet de cette scène sur Créon ?",
+                        options: ["Il doute de sa décision", "Il renforce sa résolution contre Antigone", "Il pardonne aux deux sœurs", "Il s'effondre en pleurs"],
+                        answer: 1,
+                        explanation: "L'intervention d'Ismène consolide la détermination de Créon à punir Antigone seule."
+                    }
+                ]
+            },
+            'hemon': {
+                title: "Hémon face à Créon",
+                questions: [
+                    {
+                        question: "Pourquoi Hémon vient-il voir Créon ?",
+                        options: ["Pour demander une récompense", "Pour plaider la cause d'Antigone", "Pour annoncer son départ", "Pour défier Créon en duel"],
+                        answer: 1,
+                        explanation: "Hémon, fiancé d'Antigone, tente de convaincre son père de la épargner."
+                    },
+                    {
+                        question: "Quel est le ton initial d'Hémon envers Créon ?",
+                        options: ["Respectueux et soumis", "Furieux et accusateur", "Moqueur et ironique", "Désespéré et larmoyant"],
+                        answer: 0,
+                        explanation: "Hémon commence par parler avec déférence, espérant raisonner Créon calmement."
+                    },
+                    {
+                        question: "Que dit Hémon pour défendre Antigone ?",
+                        options: ["Que le peuple la soutient", "Qu'elle est folle et irresponsable", "Qu'elle agit pour Créon", "Que Polynice était innocent"],
+                        answer: 0,
+                        explanation: "Hémon rapporte que le peuple de Thèbes admire Antigone, mettant Créon en garde contre une révolte."
+                    },
+                    {
+                        question: "Comment Créon réagit-il aux arguments d'Hémon ?",
+                        options: ["Il l'écoute avec attention", "Il rejette ses paroles avec colère", "Il change d'avis immédiatement", "Il rit de son fils"],
+                        answer: 1,
+                        explanation: "Créon s'irrite, voyant dans les mots d'Hémon une menace à son autorité paternelle et royale."
+                    },
+                    {
+                        question: "Que reproche Créon à Hémon dans cette scène ?",
+                        options: ["De trahir sa famille", "De se laisser guider par l'amour", "De mentir sur le peuple", "De vouloir le trône"],
+                        answer: 1,
+                        explanation: "Créon accuse Hémon de se comporter comme un jeune amoureux aveugle, ce qu'il juge indigne d'un prince."
+                    },
+                    {
+                        question: "Comment Hémon menace-t-il Créon ?",
+                        options: ["En disant qu'il quittera Thèbes", "En prédisant sa propre mort si Antigone meurt", "En appelant les gardes contre lui", "En jurant de tuer Créon"],
+                        answer: 1,
+                        explanation: "Hémon laisse entendre qu'il ne survivra pas à la mort d'Antigone, annonçant sa fin tragique."
+                    },
+                    {
+                        question: "Quel est le tournant dans cette confrontation ?",
+                        options: ["Créon pardonne Hémon", "Hémon défie ouvertement Créon", "Les gardes interviennent", "Antigone entre dans la pièce"],
+                        answer: 1,
+                        explanation: "La discussion passe de la diplomatie à une rupture, Hémon rejetant l'autorité de son père."
+                    },
+                    {
+                        question: "Pourquoi Créon refuse-t-il de céder à Hémon ?",
+                        options: ["Il craint le peuple", "Il veut maintenir son pouvoir absolu", "Il ne croit pas à la menace", "Il hait Antigone personnellement"],
+                        answer: 1,
+                        explanation: "Créon voit toute concession comme une faiblesse fatale à son autorité de roi."
+                    },
+                    {
+                        question: "Quel sentiment domine chez Hémon à la fin ?",
+                        options: ["La soumission", "Le désespoir et la révolte", "La joie", "La peur"],
+                        answer: 1,
+                        explanation: "Hémon quitte la scène désespéré et décidé à agir, annonçant indirectement son suicide."
+                    },
+                    {
+                        question: "Quel est l'effet de cette scène sur Créon ?",
+                        options: ["Il doute de sa décision", "Il devient plus inflexible", "Il appelle Antigone pour négocier", "Il abdique son trône"],
+                        answer: 1,
+                        explanation: "Le défi d'Hémon renforce la détermination de Créon à punir Antigone, précipitant la tragédie."
+                    }
+                ]
+            },
+            'condamnation': {
+                title: "La condamnation d'Antigone",
+                questions: [
+                    {
+                        question: "Quelle punition Créon décide-t-il pour Antigone ?",
+                        options: ["L'exil hors de Thèbes", "L'emprisonnement dans une caverne", "La décapitation publique", "Le bûcher"],
+                        answer: 1,
+                        explanation: "Créon ordonne qu'Antigone soit emmurée vivante, une punition cruelle mais indirecte pour éviter un meurtre explicite."
+                    },
+                    {
+                        question: "Pourquoi Créon choisit-il cette punition ?",
+                        options: ["Pour la torturer lentement", "Pour éviter de la tuer directement", "Pour plaire au peuple", "Pour impressionner Hémon"],
+                        answer: 1,
+                        explanation: "Créon veut échapper à la responsabilité immédiate de sa mort, laissant les dieux ou le destin décider."
+                    },
+                    {
+                        question: "Comment Antigone réagit-elle à sa condamnation ?",
+                        options: ["Elle supplie pour sa vie", "Elle l'accepte avec dignité", "Elle accuse Créon de lâcheté", "Elle s'évanouit de peur"],
+                        answer: 1,
+                        explanation: "Antigone reste fidèle à elle-même, accueillant la mort comme la conclusion logique de son choix."
+                    },
+                    {
+                        question: "Qui escorte Antigone vers sa prison ?",
+                        options: ["Créon lui-même", "Les gardes", "Hémon", "Ismène"],
+                        answer: 1,
+                        explanation: "Les gardes, figures prosaïques, conduisent Antigone à sa tombe, ajoutant une note réaliste au drame."
+                    },
+                    {
+                        question: "Quel est le ton des gardes dans cette scène ?",
+                        options: ["Compatissant et triste", "Indifférent et terre-à-terre", "Furieux et accusateur", "Respectueux et solennel"],
+                        answer: 1,
+                        explanation: "Les gardes parlent de manière pragmatique, contrastant avec la grandeur tragique d'Antigone."
+                    },
+                    {
+                        question: "Que dit Antigone avant de partir ?",
+                        options: ["Qu'elle regrette son acte", "Qu'elle rejoint ses morts avec fierté", "Qu'elle pardonne Créon", "Qu'elle aime Hémon éternellement"],
+                        answer: 1,
+                        explanation: "Antigone exprime sa satisfaction d'avoir honoré Polynice et sa famille, prête à mourir."
+                    },
+                    {
+                        question: "Pourquoi Créon reste-t-il inflexible face à Antigone ?",
+                        options: ["Il craint une révolte", "Il veut prouver son autorité", "Il a pitié d'elle", "Il suit les ordres des dieux"],
+                        answer: 1,
+                        explanation: "Créon persiste pour asseoir son pouvoir, malgré les avertissements précédents."
+                    },
+                    {
+                        question: "Quel sentiment Antigone exprime-t-elle face à sa mort ?",
+                        options: ["La peur", "La sérénité", "La colère", "Le désespoir"],
+                        answer: 1,
+                        explanation: "Antigone accepte son destin avec calme, sûre d'avoir suivi sa conscience."
+                    },
+                    {
+                        question: "Quel rôle joue le Chœur dans cette section ?",
+                        options: ["Il chante une ode joyeuse", "Il commente la tragédie avec distance", "Il défend Antigone", "Il attaque Créon"],
+                        answer: 1,
+                        explanation: "Le Chœur souligne l'inéluctabilité du drame, restant un observateur détaché."
+                    },
+                    {
+                        question: "Quel est l'effet de la condamnation sur l'histoire ?",
+                        options: ["Elle apaise les tensions", "Elle précipite les morts à venir", "Elle sauve Thèbes", "Elle rend Créon populaire"],
+                        answer: 1,
+                        explanation: "La condamnation d'Antigone déclenche la chaîne tragique menant à la mort d'Hémon et d'Eurydice."
+                    }
+                ]
+            },
+            'mort': {
+                title: "La mort d'Antigone et ses conséquences",
+                questions: [
+                    {
+                        question: "Comment Antigone meurt-elle ?",
+                        options: ["Elle est exécutée par les gardes", "Elle se pend dans la caverne", "Elle est empoisonnée", "Elle meurt de faim"],
+                        answer: 1,
+                        explanation: "Antigone choisit de se pendre, prenant elle-même son destin en main plutôt que d'attendre la mort."
+                    },
+                    {
+                        question: "Qui découvre le corps d'Antigone ?",
+                        options: ["Créon", "Hémon", "Ismène", "Le Chœur"],
+                        answer: 1,
+                        explanation: "Hémon entre dans la caverne et trouve Antigone morte, déclenchant son propre désespoir."
+                    },
+                    {
+                        question: "Que fait Hémon après avoir vu Antigone morte ?",
+                        options: ["Il s'enfuit de Thèbes", "Il se suicide avec son épée", "Il attaque Créon", "Il appelle les gardes"],
+                        answer: 1,
+                        explanation: "Hémon se tue près du corps d'Antigone, réalisant sa menace envers Créon."
+                    },
+                    {
+                        question: "Qui annonce la mort d'Hémon à Créon ?",
+                        options: ["Un messager", "Ismène", "Les gardes", "Le Chœur"],
+                        answer: 0,
+                        explanation: "Un messager rapporte les événements tragiques à Créon, conformément à la tradition théâtrale."
+                    },
+                    {
+                        question: "Quelle est la réaction de Créon en apprenant la mort d'Hémon ?",
+                        options: ["Il s'effondre de chagrin", "Il reste indifférent", "Il célèbre la nouvelle", "Il accuse les dieux"],
+                        answer: 0,
+                        explanation: "Créon commence à réaliser l'ampleur de sa perte, brisant son apparente froideur."
+                    },
+                    {
+                        question: "Que fait Eurydice, la femme de Créon, après ces nouvelles ?",
+                        options: ["Elle console Créon", "Elle se suicide en silence", "Elle part chercher Hémon", "Elle maudit Antigone"],
+                        answer: 1,
+                        explanation: "Eurydice, apprenant la mort de son fils, se tue discrètement, ajoutant au désastre."
+                    },
+                    {
+                        question: "Comment le messager décrit-il la mort d'Eurydice ?",
+                        options: ["Comme un accident", "Comme un acte de désespoir muet", "Comme une vengeance contre Créon", "Comme un sacrifice divin"],
+                        answer: 1,
+                        explanation: "Eurydice se tranche la gorge sans un mot, soulignant sa douleur inexprimable."
+                    },
+                    {
+                        question: "Quel rôle joue le Chœur dans cette section ?",
+                        options: ["Il tente de sauver Hémon", "Il décrit la chute de Créon", "Il célèbre la justice", "Il reste silencieux"],
+                        answer: 1,
+                        explanation: "Le Chœur commente la ruine de Créon, soulignant la morale tragique."
+                    },
+                    {
+                        question: "Que perd Créon à cause de sa décision ?",
+                        options: ["Son trône", "Sa famille (Hémon et Eurydice)", "Sa richesse", "Sa foi"],
+                        answer: 1,
+                        explanation: "La perte de son fils et de sa femme est la conséquence directe de son inflexibilité."
+                    },
+                    {
+                        question: "Quel est le message implicite de cette section ?",
+                        options: ["La justice triomphe toujours", "L'orgueil mène à la ruine", "L'amour sauve tout", "Les dieux sont cruels"],
+                        answer: 1,
+                        explanation: "La chute de Créon illustre les dangers de l'orgueil et de l'abus de pouvoir."
+                    }
+                ]
+            },
+            'denouement': {
+                title: "Dénouement et réflexion finale",
+                questions: [
+                    {
+                        question: "Comment Créon réagit-il à la fin de la pièce ?",
+                        options: ["Il se suicide", "Il accepte sa solitude et sa faute", "Il fuit Thèbes", "Il pardonne à tous"],
+                        answer: 1,
+                        explanation: "Créon reste vivant mais brisé, reconnaissant tardivement son erreur."
+                    },
+                    {
+                        question: "Que dit le Chœur à la fin ?",
+                        options: ["Que Créon est un héros", "Que la tragédie est finie et que la vie continue", "Que les dieux ont gagné", "Que Thèbes est sauvée"],
+                        answer: 1,
+                        explanation: "Le Chœur conclut avec détachement, notant que les autres poursuivent leur routine."
+                    },
+                    {
+                        question: "Qui reste en vie à la fin de la pièce ?",
+                        options: ["Antigone et Hémon", "Créon et Ismène", "Eurydice et le Chœur", "Les gardes et Polynice"],
+                        answer: 1,
+                        explanation: "Créon et Ismène survivent, bien que Créon soit moralement détruit."
+                    },
+                    {
+                        question: "Quel est le ton du dénouement ?",
+                        options: ["Optimiste et léger", "Désabusé et ironique", "Joyeux et festif", "Colérique et accusateur"],
+                        answer: 1,
+                        explanation: "Le ton final reflète l'absurde et la futilité, typiques de la vision d'Anouilh."
+                    },
+                    {
+                        question: "Que font les gardes à la fin ?",
+                        options: ["Ils pleurent Créon", "Ils jouent aux cartes", "Ils célèbrent la paix", "Ils arrêtent Ismène"],
+                        answer: 1,
+                        explanation: "Leur indifférence banale contraste avec la tragédie, soulignant l'absurdité de la vie."
+                    },
+                    {
+                        question: "Quel est le dernier sentiment de Créon ?",
+                        options: ["La fierté", "Le désespoir et la culpabilité", "La joie", "La vengeance"],
+                        answer: 1,
+                        explanation: "Créon est submergé par la perte et la prise de conscience de ses erreurs."
+                    },
+                    {
+                        question: "Pourquoi Ismène ne joue-t-elle pas un rôle actif à la fin ?",
+                        options: ["Elle est morte", "Elle représente la survie passive", "Elle aide Créon", "Elle fuit Thèbes"],
+                        answer: 1,
+                        explanation: "Ismène incarne ceux qui vivent en se soumettant, contrastant avec Antigone."
+                    },
+                    {
+                        question: "Quel message le Chœur laisse-t-il au public ?",
+                        options: ["La révolte est toujours juste", "La vie continue malgré la tragédie", "Les rois sont invincibles", "L'amour triomphe"],
+                        answer: 1,
+                        explanation: "Le Chœur met en avant la banalité de la vie face aux grands drames."
+                    },
+                    {
+                        question: "Que symbolise la solitude de Créon ?",
+                        options: ["Sa victoire finale", "La punition de son orgueil", "Sa sagesse retrouvée", "Son pouvoir intact"],
+                        answer: 1,
+                        explanation: "Créon paie son inflexibilité par la perte de tout ce qui lui est cher."
+                    },
+                    {
+                        question: "Quel est l'effet final de la pièce sur le spectateur ?",
+                        options: ["Un sentiment d'espoir", "Une réflexion sur l'absurde et le devoir", "Une envie de rire", "Une admiration pour Créon"],
+                        answer: 1,
+                        explanation: "La fin invite à méditer sur le conflit entre individu et pouvoir, et sur l'absurdité de la condition humaine."
+                    }
+                ]
+            }
+        };
+
+        // DOM Elements
+        const introSection = document.getElementById('intro');
+        const sectionsSection = document.getElementById('quiz-sections');
+        const questionsSection = document.getElementById('quiz-questions');
+        const resultsSection = document.getElementById('results');
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const sectionsBtn = document.getElementById('sections-btn');
+        const sectionTitle = document.getElementById('section-title');
+        const questionContainer = document.getElementById('question-container');
+        const progressIndicator = document.getElementById('progress');
+        const resultScore = document.getElementById('score');
+        const resultDetails = document.getElementById('result-details');
+        const scoreBar = document.getElementById('score-bar');
+        const visitorCount = document.getElementById('visitor-count');
+
+        // State variables
+        let currentSection = '';
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let visitors = 1;
+
+        // Increment visitor count every 5 seconds to simulate different visitors
+        // (this is just for demonstration since localStorage isn't available)
+        setInterval(() => {
+            visitors++;
+            visitorCount.textContent = visitors;
+        }, 5000);
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            introSection.classList.add('hidden');
+            sectionsSection.classList.remove('hidden');
+        });
+
+        // Section selection
+        document.querySelectorAll('[data-section]').forEach(section => {
+            section.addEventListener('click', () => {
+                currentSection = section.dataset.section;
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                sectionsSection.classList.add('hidden');
+                questionsSection.classList.remove('hidden');
+                sectionTitle.textContent = quizData[currentSection].title;
+                renderQuestion();
+            });
+        });
+
+        // Back to sections
+        backBtn.addEventListener('click', () => {
+            questionsSection.classList.add('hidden');
+            sectionsSection.classList.remove('hidden');
+        });
+
+        // Navigation buttons
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const currentQuestion = quizData[currentSection].questions[currentQuestionIndex];
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+
+            // Save the answer if one is selected
+            if (selectedOption) {
+                userAnswers[currentQuestionIndex] = parseInt(selectedOption.value);
+            }
+
+            if (currentQuestionIndex < quizData[currentSection].questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        // Results navigation
+        retryBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            resultsSection.classList.add('hidden');
+            questionsSection.classList.remove('hidden');
+            renderQuestion();
+        });
+
+        sectionsBtn.addEventListener('click', () => {
+            resultsSection.classList.add('hidden');
+            sectionsSection.classList.remove('hidden');
+        });
+
+        // Functions
+        function renderQuestion() {
+            const question = quizData[currentSection].questions[currentQuestionIndex];
+            const totalQuestions = quizData[currentSection].questions.length;
+
+            // Update progress
+            progressIndicator.textContent = `Question ${currentQuestionIndex + 1} / ${totalQuestions}`;
+            
+            // Update button states
+            prevBtn.disabled = currentQuestionIndex === 0;
+            prevBtn.classList.toggle('opacity-50', currentQuestionIndex === 0);
+            
+            // Create question markup
+            let questionHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded shadow mb-4">
+                    <h3 class="font-bold text-lg mb-4">${currentQuestionIndex + 1}. ${question.question}</h3>
+                    <div class="space-y-2">
+            `;
+
+            question.options.forEach((option, index) => {
+                const isChecked = userAnswers[currentQuestionIndex] === index;
+                questionHTML += `
+                    <div class="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        <input type="radio" id="option-${index}" name="answer" value="${index}" class="mr-2 w-4 h-4 cursor-pointer" ${isChecked ? 'checked' : ''}>
+                        <label for="option-${index}" class="cursor-pointer w-full">${option}</label>
+                    </div>
+                `;
+            });
+
+            questionHTML += `
+                    </div>
+                </div>
+            `;
+
+            questionContainer.innerHTML = questionHTML;
+        }
+
+        function showResults() {
+            questionsSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+
+            const questions = quizData[currentSection].questions;
+            let correctAnswers = 0;
+
+            // Calculate score
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.answer) {
+                    correctAnswers++;
+                }
+            });
+
+            const percentage = Math.round((correctAnswers / questions.length) * 100);
+            
+            // Display score
+            resultScore.textContent = `${correctAnswers} / ${questions.length} (${percentage}%)`;
+            scoreBar.style.width = `${percentage}%`;
+
+            // Generate result details
+            let detailsHTML = '';
+            questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index] !== undefined ? question.options[userAnswers[index]] : "Pas de réponse";
+                const correctAnswer = question.options[question.answer];
+                const isCorrect = userAnswers[index] === question.answer;
+
+                detailsHTML += `
+                    <div class="mb-4 p-4 ${isCorrect ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30'} rounded">
+                        <p class="font-bold">${index + 1}. ${question.question}</p>
+                        <p>Votre réponse: ${userAnswer}</p>
+                        <p>Réponse correcte: ${correctAnswer}</p>
+                        <p class="mt-2 text-sm">${question.explanation}</p>
+                    </div>
+                `;
+            });
+
+            resultDetails.innerHTML = detailsHTML;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Any initialization if needed
+        });
+    </script>
+</body>
+</html>
